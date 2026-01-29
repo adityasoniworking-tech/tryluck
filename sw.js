@@ -11,6 +11,7 @@ const ASSETS = [
   '/style.css?v=1.0.5',
   '/script.js?v=1.0.5',
   '/layout.js?v=1.0.5',
+  '/delivery.js?v=1.0.1',
   '/modal-handler.js?v=1.0.5',
   '/modal-injector.js?v=1.0.5',
   '/bill.js?v=1.0.5',
@@ -55,6 +56,12 @@ self.addEventListener('install', (event) => {
 
 // Always try network first, then cache
 self.addEventListener('fetch', (event) => {
+  // Skip POST requests and other non-GET methods
+  if (event.request.method !== 'GET') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+  
   // Skip cache for CSS and JS files with version params
   if (event.request.url.includes('?v=')) {
     event.respondWith(fetch(event.request));
