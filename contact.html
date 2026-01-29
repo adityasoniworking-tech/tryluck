@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - thenuttychocomorsels</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="modals.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="main-header" id="main-header"></header>
+
+    <div class="page-container">
+        <h1 class="section-title">Get In Touch</h1>
+        <p style="text-align:center; color:#666; margin-bottom:40px;">Have a query? We'd love to hear from you!</p>
+        
+        <div class="contact-grid">
+            <div class="contact-box">
+                <i class="fa-solid fa-phone"></i>
+                <h3>Call Us</h3>
+                <p><a href="tel:+919978744573" style="color:var(--text); text-decoration:none;">Shrikant Limbachiya :+91  99787 44573</a></p>
+            </div>
+            <div class="contact-box">
+                <i class="fa-solid fa-phone"></i>
+                <h3>Call Us</h3>
+                <p><a href="tel:+919974565391" style="color:var(--text); text-decoration:none;">Mihirkumar Patel :+91  99745 65391</a></p>
+            </div>
+            <div class="contact-box">
+                <i class="fa-brands fa-whatsapp"></i>
+                <h3>WhatsApp</h3>
+                <p><a href="whatsapp_select.html" target="_blank" style="color:var(--text); text-decoration:none;">Chat with us</a></p>
+            </div>
+            <div class="contact-box">
+                <i class="fa-solid fa-envelope"></i>
+                <h3>Email</h3>
+                <p><a href="mailto:thenuttychocomorsels@gmail.com" style="color:var(--text); text-decoration:none;">thenuttychocomorsels@gmail.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content" style="max-width:350px; text-align:center;">
+            <div style="text-align:right;">
+                <button onclick="document.getElementById('loginModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <h2 style="margin-bottom:20px; color:var(--primary);">Welcome Back</h2>
+            <button class="google-btn" onclick="loginGoogle()">
+                <i class="fa-brands fa-google" style="color:#DB4437;"></i> Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>My Orders</h2>
+                <button onclick="document.getElementById('profileModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <div id="myOrdersList" style="margin-top:15px;">Loading...</div>
+        </div>
+    </div>
+
+    <footer id="main-footer"></footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    
+    <script src="layout.js"></script>
+    <script src="script.js"></script>
+    <script src="modal-handler.js"></script>
+    <script src="modal-injector.js"></script>
+    <script src="bill.js"></script>
+</body>
+</html>

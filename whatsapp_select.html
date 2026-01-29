@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select WhatsApp Contact -thenuttychocomorsels</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="modals.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="main-header" id="main-header"></header>
+
+    <div class="page-container" style="max-width: 600px; text-align: center;">
+        
+        <h1 class="section-title" style="font-size: 2.5rem; margin-bottom: 10px;">💬 Select Your Contact</h1>
+        <p style="color: #666; margin-bottom: 40px;">Please choose the appropriate founder for your query.</p>
+
+        <div class="contact-grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+            
+            <a href="https://wa.me/919978744573?text=Hello%2C%20Shrikant.%20I%20have%20a%20query%20regarding%20menu%20items%20or%20support." target="_blank" class="contact-box" style="text-decoration: none; background: #E6FFEC; border: 1px solid #25d366; transition: transform 0.2s;">
+                <i class="fa-brands fa-whatsapp" style="font-size: 2.5rem; color: #25d366;"></i>
+                <h3 style="color: var(--primary); margin: 10px 0 5px;">Shrikant Limbachiya</h3>
+                <p style="font-size: 0.9rem; color: #333;">Menu & General Support (9978744573)</p>
+            </a>
+
+            <a href="https://wa.me/919974565391?text=Hello%2C%20Mihirkumar.%20I%20have%20an%20inquiry%20regarding%20orders%20and%20business." target="_blank" class="contact-box" style="text-decoration: none; background: #E6FFEC; border: 1px solid #25d366; transition: transform 0.2s;">
+                <i class="fa-brands fa-whatsapp" style="font-size: 2.5rem; color: #25d366;"></i>
+                <h3 style="color: var(--primary); margin: 10px 0 5px;">Mihirkumar Patel</h3>
+                <p style="font-size: 0.9rem; color: #333;">Orders & Business Inquiries (9974565391)</p>
+            </a>
+            
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 0.9rem; color: #999;">Please choose the relevant person for quick assistance.</p>
+
+    </div>
+
+    <footer id="main-footer"></footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="layout.js"></script>
+    <script src="script.js"></script>
+    <script src="modal-handler.js"></script>
+    <script src="modal-injector.js"></script>
+</body>
+</html>

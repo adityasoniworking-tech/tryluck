@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - thenuttychocomorsels</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Floating Cart Button */
+        .fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #2ecc71;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2000;
+        }
+
+        #cart-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #800020;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+        }
+
+        /* Checkout Form Styling */
+        .checkout-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .checkout-form input, .checkout-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .checkout-form textarea {
+            height: 80px;
+            resize: none;
+        }
+
+        .order-btn-main {
+            width: 100%;
+            padding: 15px;
+            background: #6b0f1a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .order-btn-main:hover {
+            background: #4d0a12;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="main-header" id="main-header"></header>
+
+    <h1 class="section-title">Our Collection</h1>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterMenu('all')">All</button>
+        <button class="filter-btn" onclick="filterMenu('brownie')">Brownies</button>
+        <button class="filter-btn" onclick="filterMenu('bomboloni')">Bomboloni</button>
+        <button class="filter-btn" onclick="filterMenu('cookie')">Cookies</button>
+        <button class="filter-btn" onclick="filterMenu('cheesecake')">Cheesecakes</button>
+        <button class="filter-btn" onclick="filterMenu('muffin')">Muffins</button>
+        <button class="filter-btn" onclick="filterMenu('chocolate')">Chocolates</button>
+    </div>
+
+    <div class="grid" id="menuGrid">
+        <p style="grid-column:1/-1; text-align:center;">Loading Menu...</p>
+    </div>
+
+    <div class="fab" onclick="openCart()">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cart-count">0</span>
+    </div>
+
+    <footer id="main-footer"></footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="layout.js"></script>
+    <script src="script.js"></script>
+    <script src="modal-injector.js"></script>
+    <script src="modal-handler.js"></script>
+    <script src="bill.js"></script>
+
+</body>
+</html>

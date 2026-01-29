@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - thenuttychocomorsels</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="modals.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .tracking-container { max-width: 600px; margin: 100px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .track-input-group { display: flex; gap: 10px; margin-bottom: 30px; }
+        .track-input-group input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        .track-btn { background: #6b0f1a; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        /* --- UPDATED SCOOTER ANIMATION STYLES --- */
+        .scooter-track-container { margin: 50px auto 20px; max-width: 100%; padding: 20px; position: relative; }
+        
+        .track-bg-line { position: absolute; top: 38px; left: 0; width: 100%; height: 6px; background: #eee; border-radius: 10px; z-index: 1; }
+        
+        #activeProgressLine { position: absolute; top: 38px; left: 0; width: 0%; height: 6px; background: #6b0f1a; border-radius: 10px; z-index: 2; transition: 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        #scooterIcon { position: absolute; top: 12px; left: -15px; z-index: 3; transition: 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #6b0f1a; font-size: 2rem; }
+
+        .track-steps-labels { display: flex; justify-content: space-between; position: relative; z-index: 4; padding-top: 45px; }
+        
+        .track-step { flex: 1; text-align: center; }
+        .dot { width: 15px; height: 15px; background: #ddd; border-radius: 50%; margin: 0 auto 5px; border: 3px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.1); transition: 0.3s; }
+        .step-label { font-size: 0.7rem; color: #999; transition: 0.3s; white-space: nowrap; }
+        
+        /* Active Step Style */
+        .step-active .dot { background: #6b0f1a !important; transform: scale(1.2); }
+        .step-active .step-label { color: #6b0f1a !important; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header class="main-header" id="main-header"></header>
+
+    <div class="tracking-container">
+        <h2 class="section-title">Track Your Order</h2>
+        <div class="track-input-group">
+            <input type="text" id="trackIdInput" placeholder="Enter Order ID...">
+            <button class="track-btn" onclick="trackOrder()">Track Now</button>
+        </div>
+
+        <div id="trackingResult" style="display: none;">
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #6b0f1a;">
+                <p style="margin: 5px 0;"><strong>Order ID:</strong> <span id="resId"></span></p>
+                <p style="margin: 5px 0;"><strong>Date:</strong> <span id="resDate"></span></p>
+                <p style="margin: 5px 0;"><strong>Time:</strong> <span id="resTime"></span></p>
+                <p style="margin: 5px 0;"><strong>Status:</strong> <span id="resStatusText"></span></p>
+            </div>
+
+            <div class="scooter-track-container">
+                <div class="track-bg-line"></div>
+                <div id="activeProgressLine"></div>
+
+                <div id="scooterIcon">
+                    <i class="fa-solid fa-motorcycle"></i>
+                </div>
+
+                <div class="track-steps-labels">
+                    <div class="track-step" id="step-1">
+                        <div class="dot"></div>
+                        <p class="step-label">Placed</p>
+                    </div>
+                    <div class="track-step" id="step-2">
+                        <div class="dot"></div>
+                        <p class="step-label">Confirmed</p>
+                    </div>
+                    <div class="track-step" id="step-3">
+                        <div class="dot"></div>
+                        <p class="step-label">Ready</p>
+                    </div>
+                    <div class="track-step" id="step-4">
+                        <div class="dot"></div>
+                        <p class="step-label">Delivered</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="main-footer"></footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="layout.js"></script>
+    <script src="script.js"></script>
+    <script src="modal-injector.js"></script>
+    <script src="modal-handler.js"></script>
+    <script src="bill.js"></script>
+
+    <script>
+        let currentOrderId = null;
+
+        // Override trackOrder function to show bill actions
+        const originalTrackOrder = window.trackOrder;
+        window.trackOrder = function() {
+            let inputId = document.getElementById('trackIdInput').value.trim();
+            if(!inputId) return alert("Please enter Order ID");
+
+            currentOrderId = inputId;
+
+            // .get() ko .onSnapshot() se replace kiya taaki LIVE update mile
+            db.collection("orders").doc(inputId).onSnapshot((doc) => {
+                if(doc.exists) {
+                    const data = doc.data();
+                    
+                    // Set basic info
+                    document.getElementById('resId').innerText = doc.id.toUpperCase();
+                    document.getElementById('resStatusText').innerText = data.status;
+                    
+                    // Add timestamp display
+                    const dateElement = document.getElementById('resDate');
+                    const timeElement = document.getElementById('resTime');
+                    
+                    if (data.timestamp) {
+                        const orderDate = new Date(data.timestamp.seconds * 1000);
+                        const date = orderDate.toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'long', 
+                            year: 'numeric'
+                        });
+                        const time = orderDate.toLocaleTimeString('en-IN', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        if (dateElement) dateElement.innerText = date;
+                        if (timeElement) timeElement.innerText = time;
+                    } else {
+                        if (dateElement) dateElement.innerText = 'No date';
+                        if (timeElement) timeElement.innerText = 'No time';
+                    }
+                    
+                    showTrackingResult(doc.id, data);
+                    
+                    // Show bill actions for valid orders
+                    const billActions = document.getElementById('billActions');
+                    if (billActions) {
+                        billActions.style.display = 'block';
+                    }
+                    
+                    // Scooter ko live move karega
+                    if(window.moveScooter) {
+                        window.moveScooter(data.status);
+                    }
+                } else {
+                    alert("Order ID not found. Please check and try again.");
+                    // Hide bill actions if order not found
+                    const billActions = document.getElementById('billActions');
+                    if (billActions) {
+                        billActions.style.display = 'none';
+                    }
+                }
+            }, (err) => {
+                console.error("Tracking Error:", err);
+                alert("Error fetching order details.");
+            });
+        };
+
+        window.moveScooter = function(status) {
+            const scooter = document.getElementById('scooterIcon');
+            const line = document.getElementById('activeProgressLine');
+            const s1 = document.getElementById('step-1');
+            const s2 = document.getElementById('step-2');
+            const s3 = document.getElementById('step-3');
+            const s4 = document.getElementById('step-4');
+
+            // Reset classes
+            [s1, s2, s3, s4].forEach(s => s.classList.remove('step-active'));
+
+            if (status === "Pending") {
+                scooter.style.left = "-15px";
+                line.style.width = "0%";
+                s1.classList.add('step-active');
+            } 
+            else if (status === "Accepted" || status === "Confirmed") {
+                scooter.style.left = "calc(33.33% - 15px)";
+                line.style.width = "33.33%";
+                s1.classList.add('step-active');
+                s2.classList.add('step-active');
+            } 
+            else if (status === "Ready") {
+                scooter.style.left = "calc(66.66% - 15px)";
+                line.style.width = "66.66%";
+                s1.classList.add('step-active');
+                s2.classList.add('step-active');
+                s3.classList.add('step-active');
+            }
+            else if (status === "Delivered") {
+                scooter.style.left = "calc(100% - 20px)";
+                line.style.width = "100%";
+                s1.classList.add('step-active');
+                s2.classList.add('step-active');
+                s3.classList.add('step-active');
+                s4.classList.add('step-active');
+            }
+        };
+    </script>
+</body>
+</html>
