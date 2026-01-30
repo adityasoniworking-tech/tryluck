@@ -149,7 +149,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-    <script src="delivery.js?v=1.0.1"></script>
     <script src="layout.js?v=1.0.2"></script>
     <script src="script.js?v=1.0.2"></script>
     <script src="modal-injector.js?v=1.0.2"></script>
@@ -158,82 +157,30 @@
     <script src="simple-bill.js?v=1.0.2"></script>
 
     <script>
-        // Debug and fix delivery buttons
-        console.log('🔧 Debug: Loading delivery system...');
-        
-        // Wait for all scripts to load
-        window.addEventListener('load', function() {
-            console.log('🔧 Debug: All scripts loaded');
-            
-            // Check if delivery functions exist
-            setTimeout(() => {
-                console.log('🔧 Debug: Checking functions...');
-                console.log('getUserLocation exists:', typeof window.getUserLocation);
-                console.log('openManualLocation exists:', typeof window.openManualLocation);
-                console.log('deliveryCalculator exists:', typeof window.deliveryCalculator);
-                
-                // Force attach event listeners to buttons
-                const locationBtn = document.getElementById('getLocationBtn');
-                const manualBtn = document.getElementById('manualLocationBtn');
-                
-                if (locationBtn) {
-                    console.log('🔧 Debug: Found location button');
-                    // Remove existing listeners and add new ones
-                    locationBtn.replaceWith(locationBtn.cloneNode(true));
-                    const newLocationBtn = document.getElementById('getLocationBtn');
-                    newLocationBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('🔧 Debug: Location button clicked!');
-                        if (window.getUserLocation) {
-                            window.getUserLocation();
-                        } else {
-                            alert('Location function not loaded. Please refresh page.');
-                        }
-                    });
-                }
-                
-                if (manualBtn) {
-                    console.log('🔧 Debug: Found manual button');
-                    // Remove existing listeners and add new ones
-                    manualBtn.replaceWith(manualBtn.cloneNode(true));
-                    const newManualBtn = document.getElementById('manualLocationBtn');
-                    newManualBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('🔧 Debug: Manual button clicked!');
-                        if (window.openManualLocation) {
-                            window.openManualLocation();
-                        } else {
-                            alert('Manual location function not loaded. Please refresh page.');
-                        }
-                    });
-                }
-            }, 1000);
-        });
-        
         // Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
-                        console.log('Service Worker registered successfully:', registration);
-                        
-                        // Check for updates every 30 seconds
-                        setInterval(() => {
-                            registration.update();
-                        }, 30000);
-                        
-                        // Listen for updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // Show update notification
-                                    if (confirm('New version available! Update now?')) {
-                                        window.location.reload();
-                                    }
+                    console.log('Service Worker registered successfully:', registration);
+                    
+                    // Check for updates every 30 seconds
+                    setInterval(() => {
+                        registration.update();
+                    }, 30000);
+                    
+                    // Listen for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // Show update notification
+                                if (confirm('New version available! Update now?')) {
+                                    window.location.reload();
                                 }
-                            });
+                            }
                         });
+                    });
                     })
                     .catch(error => {
                         console.log('Service Worker registration failed:', error);

@@ -723,7 +723,7 @@ class BillGenerator {
                     <div style="font-size: 12px; opacity: 0.8; line-height: 1.6;">
                         📞 ${this.companyInfo.phone} | ✉️ ${this.companyInfo.email}<br>
                         📍 ${this.companyInfo.address}<br>
-                        🌐 https://thenuttychocomorsels.netlify.app/
+                        🌐 https://thenuttychocomorsels.in/
                     </div>
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 11px; opacity: 0.7;">
                         ${this.billSettings.thankYouMessage}

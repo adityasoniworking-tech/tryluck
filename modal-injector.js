@@ -21,56 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input id="custPhone" type="text" placeholder="Phone Number (10 digits)" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
                     <textarea id="custAddress" placeholder="Full Delivery Address (Enter detailed address for accurate delivery calculation)" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px; height:80px; resize:none;"></textarea>
                     
-                    <!-- Location Capture for Distance Calculation -->
-                    <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px;">
-                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-                            <i class="fa-solid fa-location-dot" style="color:#6b0f1a;"></i>
-                            <span style="font-weight:600; color:#333;">Delivery Location</span>
-                            <span style="background:#ff6b6b; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; margin-left:auto;">Required</span>
-                        </div>
-                        
-                        <!-- Address Input with Autocomplete -->
-                        <div style="margin-bottom:10px;">
-                            <input id="addressSearch" type="text" placeholder="Search your address..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; margin-bottom:5px;">
-                            <div id="addressSuggestions" style="display:none; background:white; border:1px solid #ddd; border-radius:6px; max-height:150px; overflow-y:auto; position:relative; z-index:1000;"></div>
-                        </div>
-                        
-                        <div style="display:flex; gap:10px; margin-bottom:10px;">
-                            <input id="custLat" type="hidden" placeholder="Latitude">
-                            <input id="custLng" type="hidden" placeholder="Longitude">
-                            <button id="getLocationBtn" style="flex:1; background:#6b0f1a; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-weight:500;">
-                                <i class="fa-solid fa-map-location-dot"></i> 📍 Use Current Location
-                            </button>
-                            <button id="manualLocationBtn" style="flex:1; background:#28a745; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-weight:500;">
-                                <i class="fa-solid fa-map-pin"></i> 📍 Pin Location
-                            </button>
-                        </div>
-                        <div id="locationStatus" style="font-size:0.85rem; color:#666; margin-top:5px;"></div>
-                        <div id="deliveryInfo" style="display:none; background:#e8f5e8; padding:10px; border-radius:6px; margin-top:10px;">
-                            <div style="font-size:0.85rem; color:#2d5016;">
-                                <strong>📍 Distance:</strong> <span id="distanceText">Calculating...</span><br>
-                                <strong>🚚 Delivery Charge:</strong> <span id="deliveryCharge">₹0.00</span><br>
-                                <div id="freeDeliveryReason" style="color:#28a745; font-size:0.8rem; margin-top:3px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Order Summary with Delivery -->
-                    <div style="background:#fff3cd; border:1px solid #ffeaa7; padding:15px; border-radius:8px; margin-bottom:15px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <span>Subtotal:</span>
-                            <span id="subtotalDisplay">₹0.00</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <span>Delivery:</span>
-                            <span id="deliveryDisplay">₹0.00</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1rem; color:#6b0f1a; padding-top:5px; border-top:1px solid #ffeaa7;">
-                            <span>Total:</span>
-                            <span id="totalWithDelivery">₹0.00</span>
-                        </div>
-                    </div>
-                    
                     <button class="order-btn-main" onclick="window.placeOrder('COD')" style="width:100%; background:#6b0f1a; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">
                         Confirm & Place Order (COD)
                     </button>
@@ -133,79 +83,6 @@ window.openCart = function() {
         }
     });
     if(totalDisplay) totalDisplay.innerText = total.toFixed(2);
-    
-    // Update order summary with delivery
-    updateOrderSummary(total);
-    
-    // Attach event listeners to delivery buttons
-    setTimeout(() => {
-        const locationBtn = document.getElementById('getLocationBtn');
-        const manualBtn = document.getElementById('manualLocationBtn');
-        
-        console.log('🔧 Attaching listeners to buttons...');
-        console.log('Location button found:', !!locationBtn);
-        console.log('Manual button found:', !!manualBtn);
-        
-        if (locationBtn) {
-            locationBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('🔧 Location button clicked!');
-                if (window.getUserLocation) {
-                    window.getUserLocation();
-                } else {
-                    alert('Location function not loaded. Please refresh page.');
-                }
-            });
-        }
-        
-        if (manualBtn) {
-            manualBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('🔧 Manual button clicked!');
-                if (window.openManualLocation) {
-                    window.openManualLocation();
-                } else {
-                    alert('Manual location function not loaded. Please refresh page.');
-                }
-            });
-        }
-        
-        // Initialize address search
-        if (window.initAddressSearch) {
-            window.initAddressSearch();
-        }
-    }, 100);
-};
-
-// Update order summary with delivery charges
-window.updateOrderSummary = function(subtotal, deliveryCharge = null) {
-    const subtotalDisplay = document.getElementById('subtotalDisplay');
-    const deliveryDisplay = document.getElementById('deliveryDisplay');
-    const totalDisplay = document.getElementById('totalWithDelivery');
-
-    if (!subtotalDisplay || !deliveryDisplay || !totalDisplay) return;
-
-    // Get delivery charge if not provided
-    if (deliveryCharge === null) {
-        const deliveryChargeText = document.getElementById('deliveryCharge');
-        if (deliveryChargeText) {
-            const text = deliveryChargeText.innerText;
-            deliveryCharge = text.includes('FREE') ? 0 : parseFloat(text.replace('₹', '')) || 0;
-        } else {
-            deliveryCharge = 0;
-        }
-    }
-
-    // Calculate totals
-    const total = subtotal + deliveryCharge;
-
-    // Update display
-    subtotalDisplay.innerText = `₹${subtotal.toFixed(2)}`;
-    deliveryDisplay.innerText = deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge.toFixed(2)}`;
-    totalDisplay.innerText = `₹${total.toFixed(2)}`;
-
-    // Store for order placement
-    window.currentDeliveryCharge = deliveryCharge;
 };
 
 window.openProfile = function() {
