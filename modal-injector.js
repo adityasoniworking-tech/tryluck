@@ -19,7 +19,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="checkout-form">
                     <input id="custName" type="text" placeholder="Enter Your Name" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
                     <input id="custPhone" type="text" placeholder="Phone Number (10 digits)" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
-                    <textarea id="custAddress" placeholder="Full Delivery Address (Enter detailed address for accurate delivery calculation)" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px; height:80px; resize:none;"></textarea>
+                    <textarea id="custAddress" placeholder="Complete Delivery Address (House/Flat No, Street, Landmark, Floor, etc.)" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px; height:80px; resize:none;"></textarea>
+                    
+                    <!-- Map Location Field (Read-only) -->
+                    <input id="mapLocation" type="text" placeholder="Select your location on map (Required)" readonly style="width:100%; padding:12px; margin-bottom:15px; border:2px dashed #007bff; border-radius:8px; background:#f8f9fa; color:#666;">
+                    
+                    <!-- Hidden coordinate fields -->
+                    <input id="custLat" type="hidden" value="">
+                    <input id="custLng" type="hidden" value="">
+                    
+                    <!-- Location Selection -->
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                        <button onclick="window.getUserLocation()" style="width:48%; background:#28a745; color:white; padding:12px; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.3s ease;" onmouseover="this.style.background='#218838'" onmouseout="this.style.background='#28a745'">
+                            <i class="fa-solid fa-location-crosshairs"></i> Get My Location
+                        </button>
+                        <button onclick="window.openMapModal()" style="width:48%; background:#007bff; color:white; padding:12px; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.3s ease;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+                            <i class="fa-solid fa-map"></i> Select on Map
+                        </button>
+                    </div>
+                    
+                    <!-- Delivery Info Display -->
+                    <div id="deliveryInfo" style="background:#f8f9fa; padding:10px; border-radius:8px; margin-bottom:10px; display:none;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <span>Distance:</span>
+                            <span id="distanceDisplay">-</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <span>Delivery Charge:</span>
+                            <span id="deliveryCharge" style="color:#6b0f1a; font-weight:bold;">₹0.00</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Total Amount:</span>
+                            <span id="totalWithDelivery" style="color:#6b0f1a; font-weight:bold;">₹0.00</span>
+                        </div>
+                    </div>
                     
                     <button class="order-btn-main" onclick="window.placeOrder('COD')" style="width:100%; background:#6b0f1a; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">
                         Confirm & Place Order (COD)
@@ -35,12 +68,28 @@ document.addEventListener("DOMContentLoaded", () => {
         profileModal.innerHTML = `
         <div class="modal-content" style="display: block; overflow-y: auto; max-height: 90vh; padding: 20px;">
             <div style="position: sticky; top: -20px; background: white; z-index: 100; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 15px;">
-                <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; right:0; top:5px; cursor:pointer; font-size:24px;">&times;</span>
+                <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; right:0; top:5px; cursor:pointer; font-size:24px; z-index:1001;">&times;</span>
                 <h2 style="font-family: 'Playfair Display', serif; text-align:center; margin: 10px 0 0 0;">My Orders</h2>
             </div>
             <div id="myOrdersList"></div>
         </div>`;
     }
+
+    // 3. Inject Map Modal
+    const mapModalHTML = `
+    <div id="mapModal" class="modal" style="display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.8); z-index:10010;">
+        <div class="modal-content" style="max-width:90%; width:600px; position:relative; padding:20px;">
+            <span class="close-btn" onclick="document.getElementById('mapModal').style.display='none'">&times;</span>
+            <h3 style="font-family:'Playfair Display'; color:#6b0f1a; text-align:center; margin-bottom:15px;">Select Delivery Location</h3>
+            <div id="map" style="height:400px; border-radius:10px; margin-bottom:15px;"></div>
+            <div style="text-align:center;">
+                <button onclick="window.confirmMapLocation()" style="background:#6b0f1a; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer;">
+                    Confirm Location
+                </button>
+            </div>
+        </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', mapModalHTML);
 });
 
 // --- Data Rendering Logic ---
@@ -91,21 +140,32 @@ window.openProfile = function() {
     if(!modal || !list) return;
     
     modal.style.display = 'flex';
-    list.innerHTML = "<p style='text-align:center; padding:20px;'>Loading your orders...</p>";
+    modal.innerHTML = `
+        <div class="modal-content" style="display: block; overflow-y: auto; max-height: 90vh; padding: 20px;">
+            <div style="position: sticky; top: -20px; background: white; z-index: 100; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 15px;">
+                <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; right:10px; top:10px; cursor:pointer; font-size:28px; z-index:1002; background:#f8f9fa; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #dee2e6;">&times;</span>
+                <h2 style="font-family: 'Playfair Display', serif; text-align:center; margin: 10px 0 0 0;">My Orders</h2>
+            </div>
+            <div id="myOrdersList"></div>
+        </div>
+    `;
     
-    let savedIds = JSON.parse(localStorage.getItem('my_orders') || "[]");
-    if(savedIds.length === 0) {
-        list.innerHTML = "<p style='text-align:center; color:#999; padding:20px;'>No orders found.</p>";
-        return;
-    }
+    const newList = document.getElementById('myOrdersList');
+    if(newList) {
+        newList.innerHTML = "<p style='text-align:center; padding:20px;'>Loading your orders...</p>";
+        
+        let savedIds = JSON.parse(localStorage.getItem('my_orders') || "[]");
+        if(savedIds.length === 0) {
+            newList.innerHTML = "<p style='text-align:center; color:#999; padding:20px;'>No orders found.</p>";
+            return;
+        }
     
-    list.innerHTML = "";
-    savedIds.slice().reverse().forEach(id => {
-        db.collection("orders").doc(id).onSnapshot(doc => {
-            if(doc.exists) {
-                const order = doc.data();
-                const statusColor = order.status === 'Accepted' ? '#059669' : (order.status === 'Rejected' ? '#ef4444' : '#d97706');
-                
+        newList.innerHTML = "";
+        savedIds.slice().reverse().forEach(id => {
+            db.collection("orders").doc(id).onSnapshot(doc => {
+                if(doc.exists) {
+                    const order = doc.data();
+                    const statusColor = order.status === 'Accepted' ? '#059669' : (order.status === 'Rejected' ? '#ef4444' : '#d97706');
                 // --- Date aur Time Format Logic ---
                 let date = 'No date';
                 let time = '';
@@ -161,10 +221,10 @@ window.openProfile = function() {
                 
                 const existing = document.getElementById(`order-row-${id}`);
                 if(existing) existing.outerHTML = html;
-                else list.insertAdjacentHTML('beforeend', html);
+                else newList.insertAdjacentHTML('beforeend', html);
             }
         });
-    });
+    }
 };
 
 // --- BILL VIEW FUNCTION ---

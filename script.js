@@ -220,6 +220,7 @@ window.placeOrder = function(paymentMethod = 'COD') {
     const name = document.getElementById('custName').value.trim();
     const phone = document.getElementById('custPhone').value.trim();
     const address = document.getElementById('custAddress').value.trim();
+    const mapLocation = document.getElementById('mapLocation').value.trim();
     const lat = document.getElementById('custLat')?.value.trim() || '';
     const lng = document.getElementById('custLng')?.value.trim() || '';
     const subtotal = parseFloat(document.getElementById('cartTotal').innerText);
@@ -227,6 +228,7 @@ window.placeOrder = function(paymentMethod = 'COD') {
     const grandTotal = subtotal + deliveryCharge;
 
     if(!name || !phone || !address) return alert("Please fill all details.");
+    if(!mapLocation) return alert("Please select your location on map for delivery calculation!");
 
     let orderItems = cartIds.map(id => {
         let item = dbMenuItems.find(i => i.id == id);
@@ -244,6 +246,7 @@ window.placeOrder = function(paymentMethod = 'COD') {
         userName: name, 
         phone, 
         address,
+        mapLocation, // Map coordinates stored separately
         lat: lat,
         lng: lng,
         items: orderItems, 

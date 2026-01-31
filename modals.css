@@ -34,17 +34,22 @@
     font-size: 24px;
     cursor: pointer;
     color: #999;
+    z-index: 1000;
+    background: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
 }
 
-/* Input Fields */
-.checkout-form input, .checkout-form textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    background: #fdfdfd;
-    outline: none;
+.close-btn:hover {
+    color: #6b0f1a;
+    background: #f8f9fa;
+    transform: scale(1.1);
 }
 
 /* Order Button */

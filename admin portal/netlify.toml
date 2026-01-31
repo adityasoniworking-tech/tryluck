@@ -1,0 +1,59 @@
+# Netlify Configuration for PWA + TWA Support (FINAL)
+
+[build]
+  publish = "."
+  command = "echo 'No build command needed'"
+
+# -----------------------------
+# Headers for assetlinks.json
+# -----------------------------
+[[headers]]
+  for = "/.well-known/assetlinks.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Access-Control-Allow-Origin = "*"
+
+# -----------------------------
+# Icon Headers (REQUIRED for Bubblewrap)
+# -----------------------------
+[[headers]]
+  for = "/icons/*.png"
+  [headers.values]
+    Content-Type = "image/png"
+    Cache-Control = "public, max-age=31536000"
+
+# -----------------------------
+# Manifest Headers
+# -----------------------------
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+# -----------------------------
+# Service Worker Headers
+# -----------------------------
+[[headers]]
+  for = "/pwa-sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# -----------------------------
+# Global Security Headers
+# -----------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# -----------------------------
+# SPA Fallback (FIXES 404 ISSUE)
+# -----------------------------
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

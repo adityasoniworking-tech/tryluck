@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="modals.css?v=1.0.5">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6b0f1a">
     <meta name="mobile-web-app-capable" content="yes">
@@ -149,12 +150,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-    <script src="layout.js?v=1.0.2"></script>
-    <script src="script.js?v=1.0.2"></script>
-    <script src="modal-injector.js?v=1.0.2"></script>
-    <script src="modal-handler.js?v=1.0.2"></script>
-    <script src="bill.js?v=1.0.1"></script>
-    <script src="simple-bill.js?v=1.0.2"></script>
+    <!-- Critical Scripts First -->
+    <script src="layout.js?v=1.0.3"></script>
+    <script src="script.js?v=1.0.3"></script>
+    
+    <!-- Non-critical Scripts Deferred -->
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script defer src="modal-injector.js?v=1.0.5"></script>
+    <script defer src="modal-handler.js?v=1.0.3"></script>
+    <script defer src="delivery-map.js?v=1.0.4"></script>
+    <script defer src="bill.js?v=1.0.2"></script>
+    <script defer src="simple-bill.js?v=1.0.3"></script>
 
     <script>
         // Register Service Worker
